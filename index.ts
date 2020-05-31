@@ -48,12 +48,14 @@ export function transpile(code:Array<string>):string {
                     var out_segs = []
                     for (const segment of cc.segments) {
                         var istart = i
-                        while (1) {
+                        while (1) { // Start scanning for the segment end.
                             i += 1
-                            if (i >= code.length) {
+                            if (i >= code.length) { // no end found: throw error if segment is not optional
                                 if (segment[1]) {
+                                    i = istart // Reset cursor to rescan for the next segment
+                                    out_segs.push(undefined)
                                     break
-                                }
+                                } 
                                 console.error(`No segment end ("${segment[0]}") found for compiler command ("${command_name}").`)
                                 process.exit(1)
                             }
@@ -74,10 +76,7 @@ export function transpile(code:Array<string>):string {
         } else {
             output += evalExpressions(line) + "\n"
         }
-
     }
-
-
     return output
 }
 
