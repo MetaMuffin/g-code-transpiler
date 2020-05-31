@@ -43,5 +43,12 @@ export var compiler_commands:Record<string,CompilerCommand> = {
                 }
             }
         }
+    },
+    c: {
+        segments: [],
+        handler: (segments, arg) => {
+            scopedEval(arg)
+            return ""
+        }
     }
 }
