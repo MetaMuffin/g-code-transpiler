@@ -12,7 +12,7 @@ export interface CompilerCommand {
     handler: (segments:Array<Array<string>>, arg: string) => string
 }
 
-
+export var file_cache = {}
 
 
 export var compiler_commands:Record<string,CompilerCommand> = {
@@ -99,8 +99,10 @@ export var compiler_commands:Record<string,CompilerCommand> = {
                 console.error(`Line ?: The File ${arg} does not exist. Paths are relative to the directory of the main source file.`);
                 process.exit(1)
             }
-            var content = readFileSync(arg).toString().split("\n")
-            return transpile(content)
+            if (!file_cache[arg]){
+                file_cache[arg] = readFileSync(arg).toString().split("\n")
+            }
+            return transpile(file_cache[arg])
         }
     }
 }

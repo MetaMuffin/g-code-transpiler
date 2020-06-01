@@ -1,10 +1,11 @@
 
 ;;function blub(a,b)
     M117 Blub! {a*b}
-
 ;;end
 
 ;;cc blub(1,2)
+
+;;include ./input/blub.gcode
 
 ;;c f = 5
 
