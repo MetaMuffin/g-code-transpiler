@@ -66,3 +66,24 @@ M177 it isnt
 ;;end
 
 ```
+
+## Include
+
+```gcode
+
+; This will include g-code from a external file at this position. The file may include functions and has access to all global variables
+;;include ./something.gcode
+
+```
+
+## Functions
+
+```gcode
+; A function with two parameters.
+;;function do_something(a,b)
+    M117 {a} times {b} is {a*b}
+;;end
+
+; Functions can be called with c and cc.
+;;cc do_something(4,5)
+```
