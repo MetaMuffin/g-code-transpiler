@@ -91,7 +91,7 @@ export function transpile(code: Array<string>): string {
                 var cc = compiler_commands[command_name]
                 if (cc) {
                     var [out_segs, ni] = scanEvalSegments(cc,command_name,code,i)
-                    output += cc.handler(out_segs, command_arg) + "\n"
+                    output += cc.handler(out_segs, command_arg, i) + "\n"
                     i = ni
                 } else {
                     console.error(`Line ${i}: No compiler command for: ${command_name}`)

@@ -9,7 +9,7 @@ import { existsSync, readFileSync } from "fs"
 
 export interface CompilerCommand {
     segments: Array<[string,boolean]>, // name, optional
-    handler: (segments:Array<Array<string>>, arg: string) => string
+    handler: (segments:Array<Array<string>>, arg: string, line:number) => string
 }
 
 export var file_cache = {}
@@ -18,7 +18,7 @@ export var file_cache = {}
 export var compiler_commands:Record<string,CompilerCommand> = {
     for: {
         segments: [["end",false]],
-        handler: (segments, arg) => {
+        handler: (segments, arg, line) => {
             var args = arg.split(";")
             var out = ""
             for (scopedEval(args[0]); scopedEval(args[1]); scopedEval(args[2]) ){
@@ -29,7 +29,7 @@ export var compiler_commands:Record<string,CompilerCommand> = {
     },
     if: {
         segments: [["else",true],["end",false]],
-        handler: (segments,arg) => {
+        handler: (segments,arg, line) => {
             // if there is a else block: seg 0 is if and seg 1 is else
             // if there is no else block: seg 1 is if
             if (segments[0]) {
@@ -47,31 +47,31 @@ export var compiler_commands:Record<string,CompilerCommand> = {
     },
     c: {
         segments: [],
-        handler: (segments, arg) => {
+        handler: (segments, arg, line) => {
             scopedEval(arg)
             return ""
         }
     },
     cc: {
         segments: [],
-        handler: (segments, arg) => {
+        handler: (segments, arg, line) => {
             return scopedEval(arg)
         }
     },
     function: {
         segments: [["end",false]],
-        handler: (segments,arg) => {
+        handler: (segments,arg, line) => {
             var f_re1 = arg.match(/(?<name>\w+)\((?<args>.*)\)/i)
             var f_name = f_re1.groups.name
             if (!f_name){
-                console.error(`Line ?: No Name for function: ${arg}`)
+                console.error(`Line ${line}: No Name for function: ${arg}`)
                 process.exit(1)
             }
             var f_args = f_re1.groups.args.split(",").map((a) => a.trim())
 
             global_eval_context[f_name] = function(){
                 if (f_args.length > arguments.length){
-                    console.error(`Line ?: Not Enough arguments passed to "${f_name}": ${arguments}`)
+                    console.error(`Line ${line}: Not Enough arguments passed to "${f_name}": ${arguments}`)
                     process.exit(1)
                 }
                 var c_global = {} // Save to overwritten vars from the global context to later load them
@@ -94,9 +94,9 @@ export var compiler_commands:Record<string,CompilerCommand> = {
     },
     include: {
         segments: [],
-        handler: (segments,arg) => {
+        handler: (segments,arg,line) => {
             if (!existsSync(arg)){
-                console.error(`Line ?: The File ${arg} does not exist. Paths are relative to the directory of the main source file.`);
+                console.error(`Line ${line}: The File ${arg} does not exist. Paths are relative to the directory of the main source file.`);
                 process.exit(1)
             }
             if (!file_cache[arg]){
