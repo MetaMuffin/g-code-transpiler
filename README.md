@@ -21,11 +21,14 @@ Valid g-code *should* be valid code for this project.
 
 ## Variables, Expressions & Evaluating Code
 
-All code blocks and expressions are evaluated with javascript. 
+All code blocks and expressions are evaluated with javascript.
 
-```
+```gcode
 ; The keyword c can be used to execute code
 ;;c x = 1
+
+; cc does the same but also uses the returned value as g-code
+;;cc `M117 X${1+1} Y${2+2} Z${3+3}`
 
 ; Use expressions in g-code by surrounding then in curly-brackets
 M117 {4 * 6 / 7 % 3}
@@ -36,7 +39,7 @@ M117 {x}
 
 ## For
 
-```
+```gcode
 ; A for like that counts with i to 10
 ;;for i=0;i<10;i++
 
@@ -49,7 +52,7 @@ M117 {i}
 
 ## If
 
-```
+```gcode
 ; Self-explainatory
 ;;if (1 + 1) < 9
 M117 1+1 is actually smaller than 9.
